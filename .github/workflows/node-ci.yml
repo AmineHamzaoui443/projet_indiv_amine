@@ -1,0 +1,39 @@
+name: Node CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: self-hosted   # ton Ubuntu
+
+    steps:
+      # 1️⃣ Checkout du code
+      - uses: actions/checkout@v3
+
+      # 2️⃣ Installer Node.js
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # 3️⃣ Installer les dépendances backend
+      - name: Install Backend Dependencies
+        run: npm install
+        working-directory: ./backend
+
+      # 4️⃣ Installer les dépendances frontend
+      - name: Install Frontend Dependencies
+        run: npm install
+        working-directory: ./frontend
+
+      # 5️⃣ Lancer les tests backend
+      - name: Run Backend Tests
+        run: npm test
+        working-directory: ./backend
+
+      # 6️⃣ Lancer les tests frontend (optionnel)
+      - name: Run Frontend Tests
+        run: npm test
+        working-directory: ./frontend
