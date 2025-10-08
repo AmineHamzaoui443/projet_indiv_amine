@@ -1,14 +1,37 @@
-name: Docker Build
+name: Docker Build & Push to GHCR
 
 on:
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: ["Node CI"]   # nom exact du premier workflow
+    types:
+      - complete
 
 jobs:
-  build:
-    runs-on: self-hosted
+  build-and-push:
+    runs-on: self-hosted   # ton Ubuntu
+
     steps:
+      # 1️⃣ Checkout du code
       - uses: actions/checkout@v3
-      - run: docker build -t petite-maison-epouvante:latest .
-      - run: eval $(minikube -p minikube docker-env)
-      - run: docker build -t petite-maison-epouvante:latest .
+
+      # 2️⃣ Build de l'image Docker
+      - name: Build Docker image
+        run: docker build -t petite-maison-epouvante:latest .
+
+      # 3️⃣ Nettoyer les anciennes images inutilisées (optionnel)
+      - name: Clean dangling images
+        run: docker image prune -f
+
+      # 4️⃣ Login sur GitHub Container Registry
+      - name: Login to GHCR
+        env:
+          CR_PAT: ${{ secrets.CR_PAT }}  # Personal Access Token GitHub
+        run: echo $CR_PAT | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # 5️⃣ Taguer l'image pour GHCR
+      - name: Tag Docker image for GHCR
+        run: docker tag petite-maison-epouvante:latest ghcr.io/${{ github.repository_owner }}/petite-maison-epouvante:latest
+
+      # 6️⃣ Push sur GHCR
+      - name: Push to GHCR
+        run: docker push ghcr.io/${{ github.repository_owner }}/petite-maison-epouvante:latest
