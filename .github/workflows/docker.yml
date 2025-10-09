@@ -37,8 +37,7 @@ jobs:
       # 5️⃣ Taguer l'image pour GHCR
       - name: Tag Docker image for GHCR
         run: docker tag petite-maison-epouvante:latest ghcr.io/test/petite-maison-epouvante:latest
-        env:
-          OWNER
+        
 
       # 6️⃣ Push sur GHCR
       - name: Push to GHCR
