@@ -7,15 +7,9 @@ on:
 
 jobs:
   test:
-    runs-on: self-hosted   # Ton Ubuntu (même runner que pour Docker)
+    runs-on: self-hosted   # ton Ubuntu
 
     steps:
-      # 0️⃣ Nettoyage du workspace (important sur runner self-hosted)
-      - name: Clean workspace
-        run: |
-          echo "Cleaning workspace..."
-          sudo rm -rf "$GITHUB_WORKSPACE"/*
-
       # 1️⃣ Checkout du code
       - uses: actions/checkout@v3
 
@@ -23,16 +17,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'   # ⏩ accélère les builds suivants
 
       # 3️⃣ Installer les dépendances backend
       - name: Install Backend Dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./backend
 
       # 4️⃣ Installer les dépendances frontend
       - name: Install Frontend Dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./frontend
 
       # 5️⃣ Lancer les tests backend
