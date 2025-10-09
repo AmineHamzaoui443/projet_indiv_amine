@@ -1,7 +1,10 @@
 name: Docker Build & Push to GHCR
 
 on:
+  # Permet de lancer manuellement le workflow
   workflow_dispatch:
+
+  # Déclenche automatiquement après le workflow "Node CI"
   workflow_run:
     workflows: ["Node CI"]   # nom exact du premier workflow
     types:
@@ -9,14 +12,13 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: self-hosted   # ton Ubuntu
+    runs-on: self-hosted   # ton runner Ubuntu
 
     steps:
-    
       # 1️⃣ Checkout du code
       - uses: actions/checkout@v3
 
-      # 2️⃣ Build de l'image Docker
+      # 2️⃣ Build de l'image Docker (sans Buildx)
       - name: Build Docker image
         run: docker build -t petite-maison-epouvante:latest .
 
