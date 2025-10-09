@@ -36,9 +36,16 @@ jobs:
 
       # 5️⃣ Taguer l'image pour GHCR
       - name: Tag Docker image for GHCR
-        run: docker tag petite-maison-epouvante:latest ghcr.io/test/petite-maison-epouvante:latest
-        
-
+        run: |
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          docker tag petite-maison-epouvante:latest ghcr.io/$OWNER/petite-maison-epouvante:latest
+        env:
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+      
       # 6️⃣ Push sur GHCR
       - name: Push to GHCR
-        run: docker push ghcr.io/test/petite-maison-epouvante:latest
+        run: |
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          docker push ghcr.io/$OWNER/petite-maison-epouvante:latest
+        env:
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
