@@ -28,9 +28,11 @@ jobs:
 
       # 4️⃣ Login sur GitHub Container Registry
       - name: Login to GHCR
-        env:
-          CR_PAT: ${{ secrets.CR_PAT }}  # Personal Access Token GitHub
-        run: echo $CR_PAT | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
 
       # 5️⃣ Taguer l'image pour GHCR
       - name: Tag Docker image for GHCR
