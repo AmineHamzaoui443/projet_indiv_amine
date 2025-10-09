@@ -16,7 +16,7 @@ jobs:
 
       # 2️⃣ Build de l'image Docker
       - name: Build Docker image
-        run: docker build -t petite-maison-epouvante:latest .
+        run: docker build -t petite-maison-epouvante:latest ../..
 
       # 3️⃣ Nettoyer les anciennes images inutilisées (optionnel)
       - name: Clean dangling images
