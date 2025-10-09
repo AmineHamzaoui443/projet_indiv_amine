@@ -2,36 +2,57 @@ name: Docker Build & Push to GHCR
 
 on:
   workflow_run:
-    workflows: ["Node CI"]   # nom exact du premier workflow
+    workflows: ["Node CI"]   # 👈 Doit correspondre exactement au nom du workflow Node
     types:
-      - complete
+      - completed            # ✅ "completed" (pas "complete")
 
 jobs:
   build-and-push:
-    runs-on: self-hosted   # ton Ubuntu
+    runs-on: self-hosted     # ton Ubuntu (runner GitHub Actions)
 
     steps:
-      # 1️⃣ Checkout du code
-      - uses: actions/checkout@v3
+      # 0️⃣ Nettoyage du workspace pour éviter les anciennes versions du code
+      - name: Clean workspace
+        run: |
+          echo "Cleaning workspace..."
+          sudo rm -rf "$GITHUB_WORKSPACE"/*
 
-      # 2️⃣ Build de l'image Docker
+      # 1️⃣ Checkout du code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ Vérifie que le Dockerfile existe bien
+      - name: Check Dockerfile
+        run: |
+          if [ ! -f Dockerfile ]; then
+            echo "❌ Dockerfile introuvable dans $(pwd)"
+            ls -la
+            exit 1
+          fi
+          echo "✅ Dockerfile trouvé."
+
+      # 3️⃣ (Optionnel) Activer le moteur BuildKit moderne
+      - name: Enable Docker BuildKit
+        run: docker buildx create --use
+
+      # 4️⃣ Build de l'image Docker
       - name: Build Docker image
         run: docker build -t petite-maison-epouvante:latest .
 
-      # 3️⃣ Nettoyer les anciennes images inutilisées (optionnel)
+      # 5️⃣ Nettoyer les anciennes images inutilisées
       - name: Clean dangling images
         run: docker image prune -f
 
-      # 4️⃣ Login sur GitHub Container Registry
+      # 6️⃣ Login sur GitHub Container Registry
       - name: Login to GHCR
         env:
-          CR_PAT: ${{ secrets.CR_PAT }}  # Personal Access Token GitHub
+          CR_PAT: ${{ secrets.CR_PAT }}  # PAT GitHub avec le scope `write:packages`
         run: echo $CR_PAT | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      # 5️⃣ Taguer l'image pour GHCR
+      # 7️⃣ Taguer l'image pour GHCR
       - name: Tag Docker image for GHCR
         run: docker tag petite-maison-epouvante:latest ghcr.io/${{ github.repository_owner }}/petite-maison-epouvante:latest
 
-      # 6️⃣ Push sur GHCR
-      - name: Push to GHCR
+      # 8️⃣ Pousser l'image sur GHCR
+      - name: Push image to GHCR
         run: docker push ghcr.io/${{ github.repository_owner }}/petite-maison-epouvante:latest
