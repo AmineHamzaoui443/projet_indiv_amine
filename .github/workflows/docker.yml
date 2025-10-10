@@ -49,3 +49,16 @@ jobs:
           docker push ghcr.io/$OWNER/petite-maison-epouvante:latest
         env:
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          
+      # 7️⃣ Déployer le conteneur sur le runner
+      - name: Deploy Docker container
+        run: |
+          # Stop et supprime l'ancien conteneur s'il existe
+          docker rm -f petite-maison-epouvante || true
+          
+          # Lancer le nouveau conteneur avec le secret MongoDB
+          docker run -d -p 80:5000 \
+            -e MONGO_URI="${{ secrets.MONGO_URI }}" \
+            --name petite-maison-epouvante \
+            ghcr.io/${{ github.repository_owner | toLowerCase }}/petite-maison-epouvante:latest
+          
