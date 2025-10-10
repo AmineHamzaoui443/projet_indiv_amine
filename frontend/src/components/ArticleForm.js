@@ -13,8 +13,11 @@ function ArticleForm() {
     formData.append('description', description);
     if (image) formData.append('image', image);
 
+    // ✅ Utiliser window.location.origin pour cibler le même host que le frontend
+    const API_URL = `${window.location.origin}/api/articles`;
+
     try {
-      await axios.post('http://localhost:5000/api/articles', formData);
+      await axios.post(API_URL, formData);
       alert('Article ajouté !');
       setTitle('');
       setDescription('');
