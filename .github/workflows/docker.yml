@@ -53,12 +53,11 @@ jobs:
       # 7️⃣ Déployer le conteneur sur le runner
       - name: Deploy Docker container
         run: |
-          # Stop et supprime l'ancien conteneur s'il existe
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
           docker rm -f petite-maison-epouvante || true
           
-          # Lancer le nouveau conteneur avec le secret MongoDB
           docker run -d -p 80:5000 \
             -e MONGO_URI="${{ secrets.MONGO_URI }}" \
             --name petite-maison-epouvante \
-            ghcr.io/${{ github.repository_owner | toLowerCase }}/petite-maison-epouvante:latest
+            ghcr.io/$OWNER/petite-maison-epouvante:latest
           
