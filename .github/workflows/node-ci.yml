@@ -7,8 +7,8 @@ on:
   pull_request:
 
 jobs:
-  test:
-    runs-on: self-hosted   # ton Ubuntu
+  ci:
+    runs-on: self-hosted   # Ton runner Ubuntu
 
     steps:
       # 1️⃣ Checkout du code
@@ -19,22 +19,85 @@ jobs:
         with:
           node-version: '18'
 
-      # 3️⃣ Installer les dépendances backend
+      # 3️⃣ Dépendances backend
       - name: Install Backend Dependencies
         run: npm install
         working-directory: ./backend
 
-      # 4️⃣ Installer les dépendances frontend
+      # 4️⃣ Dépendances frontend
       - name: Install Frontend Dependencies
         run: npm install
         working-directory: ./frontend
 
-      # 5️⃣ Lancer les tests backend
+      # 5️⃣ ESLint backend
+      - name: Run ESLint Backend
+        run: npx eslint .
+        working-directory: ./backend
+
+      # 6️⃣ ESLint frontend
+      - name: Run ESLint Frontend
+        run: npx eslint .
+        working-directory: ./frontend
+
+      # 7️⃣ Tests backend
       - name: Run Backend Tests
         run: npm test
         working-directory: ./backend
 
-      # 6️⃣ Lancer les tests frontend (optionnel)
-      - name: Run Frontend Tests
+      # 8️⃣ Tests frontend
         run: npm test
         working-directory: ./frontend
+
+      # 9️⃣ SonarQube
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+
+      #################################################################
+      # 🔟 BUILD / SCAN / LOGIN / TAG / PUSH (ordre correct)
+      #################################################################
+
+      # 10️⃣ Build simple (comme ton exemple)
+      - name: Build Docker image
+        run: docker build -t petite-maison-epouvante:latest .
+
+      # 11️⃣ Nettoyage
+      - name: Clean dangling images
+        run: docker image prune -f
+
+      # 12️⃣ Scan Trivy (PAS besoin de login)
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: petite-maison-epouvante:latest
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+
+      # 13️⃣ Login GHCR
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+
+      # 14️⃣ Tag GHCR
+      - name: Tag Docker image for GHCR
+        run: |
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          docker tag petite-maison-epouvante:latest ghcr.io/$OWNER/petite-maison-epouvante:latest
+        env:
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+
+      # 15️⃣ Push vers GHCR
+      - name: Push Docker image
+        run: |
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          docker push ghcr.io/$OWNER/petite-maison-epouvante:latest
+        env:
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
