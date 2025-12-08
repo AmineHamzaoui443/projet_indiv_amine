@@ -44,7 +44,8 @@ jobs:
         run: npm test
         working-directory: ./backend
 
-      # 8️⃣ Tests frontend
+      # 8️⃣ Tests frontend  ✅ FIX ICI
+      - name: Run Frontend Tests
         run: npm test
         working-directory: ./frontend
 
