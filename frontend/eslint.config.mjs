@@ -7,7 +7,10 @@ export default [
     ignores: ["build/**"],
     languageOptions: {
       ecmaVersion: "latest",
-      sourceType: "module"
+      sourceType: "module",
+      ecmaFeatures: {
+        jsx: true // <-- Important pour parser le JSX
+      }
     },
     plugins: {
       react,
