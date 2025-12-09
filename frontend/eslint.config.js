@@ -1,13 +1,12 @@
+import tseslint from "typescript-eslint";
+
 export default [
+  ...tseslint.configs.recommended,
   {
-    files: ["**/*.js"],
-    languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
-    },
+    files: ["**/*.ts", "**/*.tsx"],
     rules: {
       "no-unused-vars": "warn",
-      "no-undef": "error",
+      "no-undef": "off",
       "no-console": "off"
     }
   }
