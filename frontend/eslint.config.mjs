@@ -1,11 +1,4 @@
-import js from "@eslint/js";
-import reactPlugin from "eslint-plugin-react";
-import jsxA11y from "eslint-plugin-jsx-a11y";
-
 export default [
-
-  js.configs.recommended,   // configuration ESLint officielle
-
   {
     files: ["src/**/*.{js,jsx}"],
     ignores: ["build/**"],
@@ -14,10 +7,13 @@ export default [
       ecmaVersion: "latest",
       sourceType: "module",
       parserOptions: {
-        ecmaFeatures: {
-          jsx: true     // <-- active la syntaxe JSX
-        }
+        ecmaFeatures: { jsx: true }
       }
+    },
+
+    env: {
+      browser: true,   // <-- AJOUT ESSENTIEL
+      es2021: true
     },
 
     plugins: {
@@ -33,9 +29,7 @@ export default [
     },
 
     settings: {
-      react: {
-        version: "detect"
-      }
+      react: { version: "detect" }
     }
   }
 ];
