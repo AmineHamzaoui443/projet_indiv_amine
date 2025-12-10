@@ -1,4 +1,9 @@
+import reactPlugin from "eslint-plugin-react";
+import jsxA11y from "eslint-plugin-jsx-a11y";
+import js from "@eslint/js";
+
 export default [
+  js.configs.recommended,
   {
     files: ["src/**/*.{js,jsx}"],
     ignores: ["build/**"],
@@ -12,7 +17,7 @@ export default [
     },
 
     env: {
-      browser: true,   // <-- AJOUT ESSENTIEL
+      browser: true,
       es2021: true
     },
 
