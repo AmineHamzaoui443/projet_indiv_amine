@@ -13,7 +13,6 @@ function ArticleForm() {
     formData.append('description', description);
     if (image) formData.append('image', image);
 
-    // ✅ Utiliser window.location.origin pour cibler le même host que le frontend
     const API_URL = `${window.location.origin}/api/articles`;
 
     try {
@@ -22,6 +21,7 @@ function ArticleForm() {
       setTitle('');
       setDescription('');
       setImage(null);
+      e.target.reset();
     } catch (err) {
       console.error(err);
       alert('Erreur lors de l’ajout de l’article');
@@ -29,22 +29,44 @@ function ArticleForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Titre"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-      />
-      <textarea
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        required
-      ></textarea>
-      <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-      <button type="submit">Proposer l’article</button>
+    <form className="article-form" onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label htmlFor="title">Titre de l’objet</label>
+        <input
+          id="title"
+          type="text"
+          placeholder="Ex. Livre qui chuchote la nuit"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="description">Description</label>
+        <textarea
+          id="description"
+          placeholder="Décrivez l’histoire, l’apparence ou les effets étranges de l’objet…"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="image">Image (optionnel)</label>
+        <input
+          id="image"
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+        />
+      </div>
+
+      <button type="submit">
+        Proposer l’article
+        <span aria-hidden="true">↗</span>
+      </button>
     </form>
   );
 }

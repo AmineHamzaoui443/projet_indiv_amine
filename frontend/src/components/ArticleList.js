@@ -4,7 +4,6 @@ import axios from 'axios';
 function ArticleList() {
   const [articles, setArticles] = useState([]);
 
-  // ✅ Définir la base URL dynamique
   const API_BASE_URL = window.location.origin;
 
   useEffect(() => {
@@ -21,17 +20,35 @@ function ArticleList() {
 
   return (
     <div>
-      <h2>Articles proposés</h2>
-      {articles.map(article => (
-        <div key={article._id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-          <h3>{article.title}</h3>
-          <p>{article.description}</p>
-          {article.image && (
-            // ✅ Image servi depuis le même host que le frontend
-            <img src={`${API_BASE_URL}/${article.image}`} alt={article.title} width="200" />
-          )}
-        </div>
-      ))}
+      <div className="articles-header">
+        <h2 className="articles-title">Articles proposés</h2>
+        <span className="articles-count">
+          {articles.length} article{articles.length > 1 ? 's' : ''}
+        </span>
+      </div>
+
+      <div className="articles-grid">
+        {articles.map((article) => (
+          <div className="article-card" key={article._id}>
+            <div className="article-image-wrapper">
+              {article.image ? (
+                <img
+                  className="article-image"
+                  src={`${API_BASE_URL}/${article.image}`}
+                  alt={article.title}
+                />
+              ) : (
+                <span className="article-placeholder">Aucune image</span>
+              )}
+            </div>
+
+            <div className="article-content">
+              <h3 className="article-title">{article.title}</h3>
+              <p className="article-description">{article.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
