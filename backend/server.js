@@ -1,4 +1,6 @@
 require('dotenv').config();
+require('crypto'); // Fix pour le bug crypto/randomUUID du SDK Azure
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
