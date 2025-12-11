@@ -26,6 +26,8 @@ jobs:
           docker rm -f petite-maison-epouvante || true
           
           docker run -d -p 80:5000 \
+            -e AZURE_STORAGE_ACCOUNT_NAME="${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}" \
+            -e AZURE_STORAGE_CONTAINER_NAME="${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}" \
             -e MONGO_URI="${{ secrets.MONGO_URI }}" \
             --name petite-maison-epouvante \
             ghcr.io/$OWNER/petite-maison-epouvante:latest
