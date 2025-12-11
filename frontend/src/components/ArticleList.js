@@ -16,7 +16,7 @@ function ArticleList() {
       }
     };
     fetchArticles();
-  }, []);
+  }, [API_BASE_URL]);
 
   return (
     <div>
@@ -34,7 +34,7 @@ function ArticleList() {
               {article.image ? (
                 <img
                   className="article-image"
-                  src={`${API_BASE_URL}/${article.image}`}
+                  src={article.image}        // URL Azure stockée en base
                   alt={article.title}
                 />
               ) : (
