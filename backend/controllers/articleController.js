@@ -1,3 +1,7 @@
+// Patch pour le bug "crypto is not defined" du SDK Azure en Node
+const nodeCrypto = require('crypto');
+global.crypto = nodeCrypto;
+
 const Article = require('../models/article');
 const { BlobServiceClient } = require('@azure/storage-blob');
 const { DefaultAzureCredential } = require('@azure/identity');
