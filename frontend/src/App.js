@@ -68,6 +68,12 @@ function App() {
   function handleLogout() {
     setUser(null);
     setToken(null);
+
+    // Recharger toutes les annonces publiques après déconnexion
+    fetch(`${API_URL}/articles`)
+      .then(res => res.json())
+      .then(setArticles)
+      .catch(console.error);
   }
 
   async function loadMyArticles() {
@@ -130,7 +136,7 @@ function App() {
                 Crée un compte pour pouvoir publier tes annonces.
               </p>
               <form className="auth-form" onSubmit={handleRegister}>
-                <input name="name" placeholder="Nom" required />
+                <input name="name" type="text" placeholder="Nom" required />
                 <input name="email" type="email" placeholder="Email" required />
                 <input
                   name="password"
