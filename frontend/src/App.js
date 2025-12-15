@@ -98,47 +98,93 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Mon site d&apos;annonces</h1>
-
-      {!user && (
-        <>
-          <h2>Inscription</h2>
-          <form onSubmit={handleRegister}>
-            <input name="name" placeholder="Nom" required />
-            <input name="email" type="email" placeholder="Email" required />
-            <input name="password" type="password" placeholder="Mot de passe" required />
-            <button type="submit">S&apos;inscrire</button>
-          </form>
-
-          <h2>Connexion</h2>
-          <form onSubmit={handleLogin}>
-            <input name="email" type="email" placeholder="Email" required />
-            <input name="password" type="password" placeholder="Mot de passe" required />
-            <button type="submit">Se connecter</button>
-          </form>
-        </>
-      )}
-
-      {user && (
+      <header className="app-header">
         <div>
-          <p>Connecté en tant que {user.name} ({user.email})</p>
-          <button onClick={handleLogout}>Se déconnecter</button>
-          <button onClick={loadMyArticles}>Voir mes annonces</button>
+          <h1 className="app-title">Mon site d&apos;annonces</h1>
+          <p className="app-subtitle">
+            Publie et gère facilement tes annonces.
+          </p>
         </div>
-      )}
 
-      <ArticleForm
-        token={token}
-        onArticleCreated={article =>
-          setArticles(prev => [article, ...prev])
-        }
-      />
+        {user && (
+          <div className="user-info">
+            <span className="user-text">
+              Connecté en tant que {user.name} ({user.email})
+            </span>
+            <button className="secondary-button" onClick={handleLogout}>
+              Se déconnecter
+            </button>
+            <button className="secondary-button" onClick={loadMyArticles}>
+              Mes annonces
+            </button>
+          </div>
+        )}
+      </header>
 
-      <ArticleList
-        articles={articles}
-        currentUser={user}
-        onDelete={handleDeleteArticle}
-      />
+      <main className="app-main">
+        <section>
+          {!user && (
+            <div className="card">
+              <h2 className="form-title">Inscription</h2>
+              <p className="form-caption">
+                Crée un compte pour pouvoir publier tes annonces.
+              </p>
+              <form className="auth-form" onSubmit={handleRegister}>
+                <input name="name" placeholder="Nom" required />
+                <input name="email" type="email" placeholder="Email" required />
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="Mot de passe"
+                  required
+                />
+                <button type="submit">S&apos;inscrire</button>
+              </form>
+
+              <h2 className="form-title" style={{ marginTop: '18px' }}>
+                Connexion
+              </h2>
+              <p className="form-caption">
+                Déjà un compte ? Connecte-toi pour gérer tes annonces.
+              </p>
+              <form className="auth-form" onSubmit={handleLogin}>
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="Email"
+                  required
+                />
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="Mot de passe"
+                  required
+                />
+                <button type="submit">Se connecter</button>
+              </form>
+            </div>
+          )}
+
+          {user && (
+            <ArticleForm
+              token={token}
+              onArticleCreated={article =>
+                setArticles(prev => [article, ...prev])
+              }
+            />
+          )}
+        </section>
+
+        <section>
+          <div className="card">
+            <ArticleList
+              articles={articles}
+              currentUser={user}
+              onDelete={handleDeleteArticle}
+            />
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

@@ -41,26 +41,45 @@ function ArticleForm({ token, onArticleCreated }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Nouvelle annonce</h2>
-      <input
-        type="text"
-        placeholder="Titre"
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        required
-      />
-      <textarea
-        placeholder="Contenu"
-        value={content}
-        onChange={e => setContent(e.target.value)}
-        required
-      />
-      <input
-        type="file"
-        onChange={e => setImage(e.target.files[0])}
-      />
-      <button type="submit">Publier</button>
+    <form className="card article-form" onSubmit={handleSubmit}>
+      <h2 className="form-title">Nouvelle annonce</h2>
+      <p className="form-caption">
+        Ajoute un titre, une description et une image pour ta nouvelle annonce.
+      </p>
+
+      <div className="form-group">
+        <label htmlFor="article-title">Titre</label>
+        <input
+          id="article-title"
+          type="text"
+          placeholder="Ex : Appartement 2 pièces à louer"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="article-content">Contenu</label>
+        <textarea
+          id="article-content"
+          placeholder="Décris ton annonce, le prix, la localisation..."
+          value={content}
+          onChange={e => setContent(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="article-image">Image (optionnel)</label>
+        <input
+          id="article-image"
+          type="file"
+          onChange={e => setImage(e.target.files[0])}
+        />
+      </div>
+
+      <button type="submit">Publier l&apos;annonce</button>
     </form>
   );
 }

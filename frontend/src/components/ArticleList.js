@@ -32,6 +32,7 @@ function ArticleList({ articles, currentUser, onDelete }) {
               {currentUser && article.owner === currentUser.id && (
                 <button
                   type="button"
+                  className="article-delete-button"
                   onClick={() => onDelete && onDelete(article._id)}
                 >
                   Supprimer
