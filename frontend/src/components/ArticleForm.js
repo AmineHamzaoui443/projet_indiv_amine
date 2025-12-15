@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = '/api';
 
 function ArticleForm({ token, onArticleCreated }) {
   const [title, setTitle] = useState('');
@@ -12,7 +12,7 @@ function ArticleForm({ token, onArticleCreated }) {
 
     const formData = new FormData();
     formData.append('title', title);
-    formData.append('content', content);
+    formData.append('description', content);
     if (image) {
       formData.append('image', image);
     }
@@ -21,7 +21,7 @@ function ArticleForm({ token, onArticleCreated }) {
       const res = await fetch(`${API_URL}/articles`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: formData
+        body: formData,
       });
 
       if (!res.ok) {

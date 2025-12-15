@@ -37,7 +37,7 @@ async function uploadToAzure(file) {
   return blockBlobClient.url;
 }
 
-// Créer un nouvel article
+// Créer un nouvel article (user authentifié)
 exports.createArticle = async (req, res) => {
   try {
     const { title, description } = req.body;
@@ -50,7 +50,8 @@ exports.createArticle = async (req, res) => {
     const article = new Article({
       title,
       description,
-      image: imageUrl
+      image: imageUrl,
+      owner: req.user.userId, // <-- liaison avec le user du token
     });
 
     await article.save();
@@ -63,18 +64,81 @@ exports.createArticle = async (req, res) => {
   }
 };
 
-// Récupérer tous les articles
+// Récupérer tous les articles (public)
 exports.getArticles = async (req, res) => {
   try {
     const articles = await Article.find().sort({ createdAt: -1 });
     res.json(articles);
   } catch (error) {
     console.error('Erreur getArticles:', error);
-    res
-      .status(500)
-      .json({
-        message: 'Erreur lors de la récupération des articles',
-        error
-      });
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des articles',
+      error
+    });
+  }
+};
+
+// Récupérer les articles du user connecté
+exports.getMyArticles = async (req, res) => {
+  try {
+    const articles = await Article.find({ owner: req.user.userId })
+      .sort({ createdAt: -1 });
+    res.json(articles);
+  } catch (error) {
+    console.error('Erreur getMyArticles:', error);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des articles utilisateur',
+      error
+    });
+  }
+};
+
+// Mettre à jour un article du user connecté
+exports.updateArticle = async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id);
+    if (!article) {
+      return res.status(404).json({ message: 'Article non trouvé' });
+    }
+
+    if (article.owner.toString() !== req.user.userId) {
+      return res.status(403).json({ message: 'Action non autorisée' });
+    }
+
+    const { title, description } = req.body;
+    if (title !== undefined) article.title = title;
+    if (description !== undefined) article.description = description;
+
+    await article.save();
+    res.json(article);
+  } catch (error) {
+    console.error('Erreur updateArticle:', error);
+    res.status(500).json({
+      message: 'Erreur lors de la mise à jour de l’article',
+      error
+    });
+  }
+};
+
+// Supprimer un article du user connecté
+exports.deleteArticle = async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id);
+    if (!article) {
+      return res.status(404).json({ message: 'Article non trouvé' });
+    }
+
+    if (article.owner.toString() !== req.user.userId) {
+      return res.status(403).json({ message: 'Action non autorisée' });
+    }
+
+    await article.deleteOne();
+    res.json({ message: 'Article supprimé' });
+  } catch (error) {
+    console.error('Erreur deleteArticle:', error);
+    res.status(500).json({
+      message: 'Erreur lors de la suppression de l’article',
+      error
+    });
   }
 };

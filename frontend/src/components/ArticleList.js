@@ -1,23 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 
-function ArticleList() {
-  const [articles, setArticles] = useState([]);
-
-  const API_BASE_URL = window.location.origin;
-
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/api/articles`);
-        setArticles(res.data);
-      } catch (err) {
-        console.error('Erreur lors de la récupération des articles :', err);
-      }
-    };
-    fetchArticles();
-  }, [API_BASE_URL]);
-
+function ArticleList({ articles, currentUser, onDelete }) {
   return (
     <div>
       <div className="articles-header">
@@ -34,7 +17,7 @@ function ArticleList() {
               {article.image ? (
                 <img
                   className="article-image"
-                  src={article.image}        // URL Azure stockée en base
+                  src={article.image}
                   alt={article.title}
                 />
               ) : (
@@ -45,6 +28,15 @@ function ArticleList() {
             <div className="article-content">
               <h3 className="article-title">{article.title}</h3>
               <p className="article-description">{article.description}</p>
+
+              {currentUser && article.owner === currentUser.id && (
+                <button
+                  type="button"
+                  onClick={() => onDelete && onDelete(article._id)}
+                >
+                  Supprimer
+                </button>
+              )}
             </div>
           </div>
         ))}

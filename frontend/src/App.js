@@ -70,6 +70,32 @@ function App() {
     setToken(null);
   }
 
+  async function loadMyArticles() {
+    if (!token) return;
+    try {
+      const res = await fetch('/api/articles/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setArticles(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function handleDeleteArticle(id) {
+    if (!token) return;
+    if (!window.confirm('Supprimer cette annonce ?')) return;
+
+    const res = await fetch(`/api/articles/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return;
+    setArticles(prev => prev.filter(a => a._id !== id));
+  }
+
   return (
     <div className="App">
       <h1>Mon site d&apos;annonces</h1>
@@ -97,6 +123,7 @@ function App() {
         <div>
           <p>Connecté en tant que {user.name} ({user.email})</p>
           <button onClick={handleLogout}>Se déconnecter</button>
+          <button onClick={loadMyArticles}>Voir mes annonces</button>
         </div>
       )}
 
@@ -107,7 +134,11 @@ function App() {
         }
       />
 
-      <ArticleList articles={articles} />
+      <ArticleList
+        articles={articles}
+        currentUser={user}
+        onDelete={handleDeleteArticle}
+      />
     </div>
   );
 }
