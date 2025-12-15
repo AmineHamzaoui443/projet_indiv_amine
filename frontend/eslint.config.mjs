@@ -22,6 +22,7 @@ export default [
         console: "readonly",
         alert: "readonly",
         FormData: "readonly",
+        fetch: "readonly", // <-- ajout
       },
     },
 
