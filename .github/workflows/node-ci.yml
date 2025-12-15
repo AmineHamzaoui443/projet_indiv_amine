@@ -65,7 +65,7 @@ jobs:
 
       # 10️⃣ Build simple (comme ton exemple)
       - name: Build Docker image
-        run: docker build -t petite-maison-epouvante:latest .
+        run: docker build --no-cache -t petite-maison-epouvante:latest .
 
       # 11️⃣ Nettoyage
       - name: Clean dangling images
