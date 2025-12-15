@@ -7,6 +7,7 @@ const cors = require('cors');
 const path = require('path');
 
 const articleRoutes = require('./routes/articles');
+const authRoutes = require('./routes/auth'); // <-- ajout
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 // app.use('/uploads', express.static('uploads')); // plus utilisé avec Azure
 
 // Routes API
+app.use('/api/auth', authRoutes);      // <-- ajout
 app.use('/api/articles', articleRoutes);
 
 // --- Servir le frontend React buildé ---
