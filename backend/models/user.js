@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Hash du mot de passe avant sauvegarde
+// H
+// ash du mot de passe avant sauvegarde
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(10);
