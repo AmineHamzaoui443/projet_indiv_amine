@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import ArticleForm from './components/ArticleForm';
 import ArticleList from './components/ArticleList';
 
-const API_URL = 'http://localhost:5000/api';
+// En prod : même origine que le backend
+const API_URL = '/api';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -27,8 +28,8 @@ function App() {
       body: JSON.stringify({
         name: name.value,
         email: email.value,
-        password: password.value
-      })
+        password: password.value,
+      }),
     });
 
     if (!res.ok) {
@@ -50,8 +51,8 @@ function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: email.value,
-        password: password.value
-      })
+        password: password.value,
+      }),
     });
 
     if (!res.ok) {
