@@ -102,13 +102,13 @@ function App() {
     setArticles(prev => prev.filter(a => a._id !== id));
   }
 
-  return (
-    <div className="App">
-      <header className="app-header">
+    return (
+    <div className="App page">
+      <header className="app-header hero">
         <div>
-          <h1 className="app-title">Mon site d&apos;annonces</h1>
-          <p className="app-subtitle">
-            Publie et gère facilement tes annonces.
+          <h1 className="app-title spooky-title">La petite maison épouvante</h1>
+          <p className="app-subtitle tagline">
+            Là où chaque annonce laisse une trace que la nuit n’efface jamais.
           </p>
         </div>
 
@@ -127,13 +127,22 @@ function App() {
         )}
       </header>
 
-      <main className="app-main">
+      <section className="hero-media">
+        <div className="hero-badge">Entrez… si vous l’osez</div>
+        <div className="hero-icons">
+          <span className="hero-icon">🕯️</span>
+          <span className="hero-icon">🕷️</span>
+          <span className="hero-icon">🏚️</span>
+        </div>
+      </section>
+
+      <main className="app-main content">
         <section>
           {!user && (
             <div className="card">
-              <h2 className="form-title">Inscription</h2>
+              <h2 className="form-title">Rejoindre la maison</h2>
               <p className="form-caption">
-                Crée un compte pour pouvoir publier tes annonces.
+                Crée un compte pour publier tes annonces… et ne plus jamais les oublier.
               </p>
               <form className="auth-form" onSubmit={handleRegister}>
                 <input name="name" type="text" placeholder="Nom" required />
@@ -148,10 +157,10 @@ function App() {
               </form>
 
               <h2 className="form-title" style={{ marginTop: '18px' }}>
-                Connexion
+                Déjà dans la maison ?
               </h2>
               <p className="form-caption">
-                Déjà un compte ? Connecte-toi pour gérer tes annonces.
+                Connecte-toi pour retrouver tes annonces les plus inquiétantes.
               </p>
               <form className="auth-form" onSubmit={handleLogin}>
                 <input

@@ -287,3 +287,48 @@ textarea {
   background: #4b5563;
   border-radius: 999px;
 }
+.page {
+  background: radial-gradient(circle at top, #111827, #020617);
+}
+
+.spooky-title {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.tagline {
+  font-style: italic;
+  color: #9ca3af;
+}
+
+.hero {
+  background: linear-gradient(90deg, rgba(15,23,42,0.9), rgba(15,23,42,0.3));
+  box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+}
+
+.hero-media {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1000px;
+  margin: 10px auto 0;
+  padding: 0 16px 10px;
+}
+
+.hero-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(248, 113, 113, 0.8);
+  color: #fecaca;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.hero-icons {
+  display: flex;
+  gap: 10px;
+  font-size: 1.4rem;
+  opacity: 0.9;
+}
+
