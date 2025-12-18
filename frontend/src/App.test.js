@@ -5,7 +5,7 @@ import App from './App';
 test("affiche le titre 'Mon site d'annonces'", () => {
   render(<App />);
 
-  const title = screen.getByText(/mon site d'annonces/i);
+  const title = screen.getByText(/la petite maison épouvante/i);
 
   expect(title).toBeInTheDocument();
 });
