@@ -7,17 +7,16 @@ const cors = require('cors');
 const path = require('path');
 
 const articleRoutes = require('./routes/articles');
-const authRoutes = require('./routes/auth'); // <-- ajout
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-// app.use('/uploads', express.static('uploads')); // plus utilisé avec Azure
 
 // Routes API
-app.use('/api/auth', authRoutes);      // <-- ajout
+app.use('/api/auth', authRoutes);
 app.use('/api/articles', articleRoutes);
 
 // --- Servir le frontend React buildé ---
@@ -32,11 +31,20 @@ app.get('*', (req, res) => {
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
-  .then(() => console.log('✅ MongoDB connecté'))
+  .then(() => {
+    console.log('✅ MongoDB connecté');
+
+    // Ne PAS démarrer le serveur pendant les tests
+    if (process.env.NODE_ENV !== 'test') {
+      const PORT = process.env.PORT || 5000;
+      app.listen(PORT, () =>
+        console.log(`🚀 Serveur démarré sur le port ${PORT}`)
+      );
+    }
+  })
   .catch((err) => console.error('❌ Erreur MongoDB:', err));
 
-// --- Démarrage du serveur ---
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));
+// Export pour les tests
+module.exports = app;
