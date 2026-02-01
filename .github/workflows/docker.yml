@@ -27,7 +27,7 @@ jobs:
       - name: Deploy to Kubernetes (Minikube)
         run: |
           OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
-          IMAGE="ghcr.io/$OWNER/petite-maison-epouvante:latest"
+          IMAGE="ghcr.io/aminehamzaoui443/petite-maison-epouvante:latest"
 
           # Namespace
           kubectl apply -f k8s/namespace.yaml
