@@ -20,7 +20,7 @@ jobs:
 
           minikube status || true
           if ! minikube status | grep -q "host: Running"; then
-            sudo minikube start --driver=none
+            sudo minikube start --driver=none --cni=flannel
           fi
 
           kubectl get nodes
