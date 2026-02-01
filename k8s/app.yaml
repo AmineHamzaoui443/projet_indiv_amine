@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pme-backend
+  namespace: pme
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pme-backend
+  template:
+    metadata:
+      labels:
+        app: pme-backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/OWNER/petite-maison-epouvante:latest
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - secretRef:
+                name: pme-secrets
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "800m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pme-service
+  namespace: pme
+spec:
+  selector:
+    app: pme-backend
+  ports:
+    - port: 80
+      targetPort: 5000
+  type: NodePort
