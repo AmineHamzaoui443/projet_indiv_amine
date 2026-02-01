@@ -15,13 +15,19 @@ jobs:
 
       - name: Ensure Minikube is running
         run: |
+          sudo sysctl -w fs.protected_regular=0
+          sudo rm -f /tmp/juju-*
+
           minikube status || true
           if ! minikube status | grep -q "host: Running"; then
-            minikube start --driver=none --addons=metrics-server
+            sudo minikube start --driver=none
           fi
+
           kubectl get nodes
-          kubectl get pods -n kube-system | grep metrics || true
-          minikube image load ghcr.io/aminehamzaoui443/petite-maison-epouvante:latest
+
+          # l'image est déjà sur la VM : on la charge dans minikube (idempotent)
+          minikube image load ghcr.io/aminehamzaoui443/petite-maison-epouvante:latest || true
+
 
 
       - name: Deploy to Kubernetes (Minikube)
@@ -46,6 +52,10 @@ jobs:
 
           # Set image explicitly (avoid stale image)
           kubectl -n pme set image deployment/pme-backend backend="$IMAGE" 
+
+          # Forcer l'utilisation de l'image locale (évite le pull GHCR)
+          kubectl -n pme patch deployment pme-backend -p \
+          '{"spec":{"template":{"spec":{"containers":[{"name":"backend","imagePullPolicy":"IfNotPresent"}]}}}}'
 
           # Rollout
           kubectl -n pme rollout status deployment/pme-backend --timeout=180s
