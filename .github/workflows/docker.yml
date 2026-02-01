@@ -1,37 +1,56 @@
 name: Deploy
 
 on:
-  # Permet de lancer manuellement le workflow
   workflow_dispatch:
-
-  # Déclenche automatiquement après le workflow "Node CI"
   workflow_run:
-    workflows: ["Node CI"]   # nom exact du premier workflow
-    types:
-      - complete
+    workflows: ["Node CI"]
+    types: [completed]
 
 jobs:
   deploy:
-    runs-on: self-hosted  # Utiliser ton runner Ubuntu
+    runs-on: self-hosted
 
     steps:
-      # 1️⃣ Checkout du code (utile pour récupérer les secrets)
       - uses: actions/checkout@v3
 
-      # 2️⃣ Déployer le conteneur Docker
-      - name: Deploy Docker container
+      - name: Ensure Minikube is running
+        run: |
+          minikube status || true
+          if ! minikube status | grep -q "host: Running"; then
+            minikube start --driver=docker --addons=metrics-server
+          fi
+          kubectl get nodes
+          kubectl get pods -n kube-system | grep metrics || true
+
+      - name: Deploy to Kubernetes (Minikube)
         run: |
           OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
-          
-          docker rm -f petite-maison-epouvante || true
-          
-          docker run -d -p 80:5000 \
-            -e AZURE_STORAGE_ACCOUNT_NAME="${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}" \
-            -e AZURE_STORAGE_CONTAINER_NAME="${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}" \
-            -e MONGO_URI="${{ secrets.MONGO_URI }}" \
-            -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
-            --name petite-maison-epouvante \
-            ghcr.io/$OWNER/petite-maison-epouvante:latest
+          IMAGE="ghcr.io/$OWNER/petite-maison-epouvante:latest"
+
+          # Namespace
+          kubectl apply -f k8s/namespace.yaml
+
+          # Secrets (idempotent)
+          kubectl -n pme delete secret pme-secrets --ignore-not-found
+          kubectl -n pme create secret generic pme-secrets \
+            --from-literal=AZURE_STORAGE_ACCOUNT_NAME="${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}" \
+            --from-literal=AZURE_STORAGE_CONTAINER_NAME="${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}" \
+            --from-literal=MONGO_URI="${{ secrets.MONGO_URI }}" \
+            --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}"
+
+          # Apply app + HPA
+          kubectl apply -f k8s/app.yaml
+          kubectl apply -f k8s/hpa.yaml
+
+          # Set image explicitly (avoid stale image)
+          kubectl -n pme set image deployment/pme-backend backend="$IMAGE" --record
+
+          # Rollout
+          kubectl -n pme rollout status deployment/pme-backend --timeout=180s
+
+          # Show info
+          kubectl -n pme get pods -o wide
+          kubectl -n pme get svc
+          kubectl -n pme get hpa
         env:
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          
