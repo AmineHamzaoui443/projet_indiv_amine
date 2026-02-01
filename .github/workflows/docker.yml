@@ -21,6 +21,8 @@ jobs:
           fi
           kubectl get nodes
           kubectl get pods -n kube-system | grep metrics || true
+          minikube image load ghcr.io/aminehamzaoui443/petite-maison-epouvante:latest
+
 
       - name: Deploy to Kubernetes (Minikube)
         run: |
