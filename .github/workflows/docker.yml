@@ -20,44 +20,36 @@ jobs:
           sudo sysctl -w fs.protected_regular=0
           sudo rm -f /tmp/juju-*
 
-          echo "== minikube version =="
-          sudo minikube version
-
-          echo "== minikube status (raw) =="
           sudo minikube status || true
-
-          echo "== minikube status (json) =="
           STATUS_JSON="$(sudo minikube status --output=json || true)"
           echo "$STATUS_JSON"
 
-          # Démarrer si pas RUNNING (host ou apiserver)
           if ! echo "$STATUS_JSON" | grep -q '"Host":"Running"'; then
-            echo "Starting minikube (host not running)..."
             sudo minikube start --driver=none --cni=flannel
           elif ! echo "$STATUS_JSON" | grep -q '"APIServer":"Running"'; then
-            echo "Starting minikube (apiserver not running)..."
             sudo minikube start --driver=none --cni=flannel
-          else
-            echo "Minikube already running."
           fi
 
-          # IMPORTANT: kubectl doit utiliser admin.conf (pas /root/.minikube)
-          export KUBECONFIG=/etc/kubernetes/admin.conf
+          # ✅ kubeconfig lisible par le user du runner
           mkdir -p "$HOME/.kube"
           sudo cp -f /etc/kubernetes/admin.conf "$HOME/.kube/config"
           sudo chown -R "$(id -u)":"$(id -g)" "$HOME/.kube"
           chmod 600 "$HOME/.kube/config"
 
-          echo "== kubectl get nodes =="
+          # ✅ utiliser le kubeconfig du HOME (pas /etc/kubernetes/admin.conf)
+          export KUBECONFIG="$HOME/.kube/config"
+
           kubectl get nodes -o wide
 
-          # Image load (cluster root-owned en driver=none)
           sudo minikube image load ghcr.io/aminehamzaoui443/petite-maison-epouvante:latest || true
 
 
 
       - name: Deploy to Kubernetes (Minikube)
         run: |
+          export KUBECONFIG="$HOME/.kube/config"
+          kubectl get nodes
+
           OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
           IMAGE="ghcr.io/aminehamzaoui443/petite-maison-epouvante:latest"
 
