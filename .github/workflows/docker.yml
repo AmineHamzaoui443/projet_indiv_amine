@@ -22,10 +22,6 @@ jobs:
           kubectl get nodes
           kubectl get pods -n kube-system | grep metrics || true
 
-      - name: Login to GHCR
-        run: |
-          echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-
       - name: Deploy to Kubernetes (Minikube)
         run: |
           OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
