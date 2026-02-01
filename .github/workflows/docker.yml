@@ -17,7 +17,7 @@ jobs:
         run: |
           minikube status || true
           if ! minikube status | grep -q "host: Running"; then
-            minikube start --driver=docker --addons=metrics-server
+            minikube start --driver=none --addons=metrics-server
           fi
           kubectl get nodes
           kubectl get pods -n kube-system | grep metrics || true
@@ -45,7 +45,7 @@ jobs:
           kubectl apply -f k8s/hpa.yaml
 
           # Set image explicitly (avoid stale image)
-          kubectl -n pme set image deployment/pme-backend backend="$IMAGE" --record
+          kubectl -n pme set image deployment/pme-backend backend="$IMAGE" 
 
           # Rollout
           kubectl -n pme rollout status deployment/pme-backend --timeout=180s
