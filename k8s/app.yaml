@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/$OWNER/petite-maison-epouvante:latest
+          image: ghcr.io/aminehamzaoui443/petite-maison-epouvante:latest
           ports:
             - containerPort: 5000
           envFrom:
