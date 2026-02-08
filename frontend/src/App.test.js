@@ -33,5 +33,5 @@ test("affiche les formulaires d'inscription et connexion quand non connecté", (
 
 test('appelle GET /api/articles au montage', async () => {
   render(<App />);
-  expect(global.fetch).toHaveBeenCalledWith('/api/articles');
+  expect(globalThis.fetch).toHaveBeenCalledWith('/api/articles');
 });
