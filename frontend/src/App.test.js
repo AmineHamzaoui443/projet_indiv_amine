@@ -4,7 +4,7 @@ import App from './App';
 
 beforeEach(() => {
   // Mock fetch pour le GET /api/articles au montage
-  global.fetch = jest.fn(() =>
+  globalThis.fetch = jest.fn(() =>
     Promise.resolve({
       ok: true,
       json: () => Promise.resolve([]),
