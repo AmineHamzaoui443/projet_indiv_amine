@@ -76,12 +76,14 @@ jobs:
         run: docker image prune -f
 
       # 12️⃣ Scan Trivy (PAS besoin de login)
-      - name: Scan Docker image with Trivy
+      - name: Scan image (important issues only)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: petite-maison-epouvante:latest
           severity: HIGH,CRITICAL
           ignore-unfixed: true
+          exit-code: '0'
+
 
       # 13️⃣ Login GHCR
       - name: Login to GHCR
