@@ -81,7 +81,7 @@ jobs:
         with:
           image-ref: petite-maison-epouvante:latest
           severity: HIGH,CRITICAL
-          ignore-unfixed: true
+          ignore-unfixed: false
           exit-code: '0'
 
 
