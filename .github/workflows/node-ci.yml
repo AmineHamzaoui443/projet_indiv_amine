@@ -41,12 +41,16 @@ jobs:
 
       # 7️⃣ Tests backend
       - name: Run Backend Tests
-        run: npm test
+        run: npm test -- --coverage
         working-directory: ./backend
+
+      - name: Normalize lcov paths (Windows -> Linux)
+        run: sed -i 's#\\#/#g' backend/coverage/lcov.info
+
 
       # 8️⃣ Tests frontend  ✅ FIX ICI
       - name: Run Frontend Tests
-        run: npm test
+        run: npm test -- --coverage
         working-directory: ./frontend
 
       # 9️⃣ SonarQube
